@@ -14,11 +14,11 @@ const fadeInUp = {
   },
   animate: { 
     opacity: 1, 
-    y: 0 
-  },
-  transition: {
-    duration: 0.5,
-    ease: "easeOut"
+    y: 0,
+    transition: {
+      duration: 0.5,
+      ease: "easeOut"
+    }
   }
 } as const
 
@@ -28,7 +28,7 @@ const staggerContainer = {
       staggerChildren: 0.1
     }
   }
-}
+} as const
 
 const HomeSection = () => (
   <section id="home" className="relative min-h-screen flex items-center justify-center bg-gradient-to-b from-secondary to-secondary/90 dark:from-secondary-dark dark:to-secondary-dark/90 pt-20 overflow-hidden">
