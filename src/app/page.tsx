@@ -79,7 +79,7 @@ const HomeSection = () => (
         transition={{ duration: 0.8, delay: 0.6 }}
       >
         <p className="mb-4">
-          Data scientist specializing in machine learning and data-driven solutions.
+          Data scientist specialized in machine learning and data-driven solutions.
         </p>
         <p>
           With a strong foundation in developing scalable data systems, I focus on creating impactful projects that bridge the gap between data and business needs.
