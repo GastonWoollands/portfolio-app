@@ -9,11 +9,16 @@ interface Message {
   content: string
 }
 
-export default function Chatbot() {
+interface ChatbotProps {
+  isOpen: boolean
+  onClose: () => void
+  onOpen: () => void
+}
+
+export default function Chatbot({ isOpen, onClose, onOpen }: ChatbotProps) {
   const [messages, setMessages] = useState<Message[]>([])
   const [input, setInput] = useState('')
   const [isLoading, setIsLoading] = useState(false)
-  const [isOpen, setIsOpen] = useState(false)
   const messagesEndRef = useRef<HTMLDivElement>(null)
 
   const scrollToBottom = () => {
@@ -64,23 +69,43 @@ export default function Chatbot() {
           animate={{ scale: 1, opacity: 1 }}
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
-          onClick={() => setIsOpen(true)}
-          className="fixed bottom-4 right-4 z-50 bg-accent dark:bg-accent-dark text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200"
+          onClick={onOpen}
+          className="fixed bottom-4 right-4 z-50 bg-accent dark:bg-accent-dark text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-200 group"
         >
-          <svg
-            className="w-6 h-6"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
-            xmlns="http://www.w3.org/2000/svg"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+          <div className="relative">
+            {/* Pulsing background effect */}
+            <motion.div
+              className="absolute inset-0 bg-accent/20 dark:bg-accent-dark/20 rounded-full"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.5, 0, 0.5],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut",
+              }}
             />
-          </svg>
+            {/* Main chat icon */}
+            <svg
+              className="w-8 h-8 transform group-hover:scale-110 transition-transform duration-200"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+              />
+            </svg>
+          </div>
+          {/* Tooltip */}
+          <div className="absolute right-0 bottom-0 mb-2 mr-16 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+            Chat with me
+          </div>
         </motion.button>
       )}
 
@@ -98,7 +123,7 @@ export default function Chatbot() {
                   Chat with Gaston's Assistant
                 </h3>
                 <button
-                  onClick={() => setIsOpen(false)}
+                  onClick={onClose}
                   className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 transition-colors duration-200"
                 >
                   <svg

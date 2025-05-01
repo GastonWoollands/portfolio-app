@@ -11,7 +11,11 @@ const sections = [
   { id: 'contact', label: 'Contact' },
 ]
 
-const Navbar = () => {
+interface NavbarProps {
+  onChatOpen: () => void
+}
+
+const Navbar = ({ onChatOpen }: NavbarProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
@@ -98,6 +102,32 @@ const Navbar = () => {
                   </Link>
                 ))}
               </div>
+
+              {/* Chat button */}
+              <button
+                onClick={onChatOpen}
+                className="p-2 rounded-full bg-accent dark:bg-accent-dark text-white hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 group relative"
+                aria-label="Open chat"
+              >
+                <svg
+                  className="w-5 h-5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
+                  />
+                </svg>
+                {/* Tooltip */}
+                <div className="absolute right-0 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                  Chat with me
+                </div>
+              </button>
 
               <button
                 onClick={toggleTheme}

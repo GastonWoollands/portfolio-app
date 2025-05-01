@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import Image from 'next/image'
 import Chatbot from '@/components/Chatbot'
+import { useState } from 'react'
 
 const fadeInUp = {
   initial: { 
@@ -393,15 +394,21 @@ const ContactSection = () => {
 }
 
 export default function Home() {
+  const [isChatOpen, setIsChatOpen] = useState(false)
+
   return (
     <main className="relative">
-      <Navbar />
+      <Navbar onChatOpen={() => setIsChatOpen(true)} />
       <div className="relative z-10">
         <HomeSection />
         <ProjectsSection />
         <ContactSection />
       </div>
-      <Chatbot />
+      <Chatbot 
+        isOpen={isChatOpen} 
+        onOpen={() => setIsChatOpen(true)} 
+        onClose={() => setIsChatOpen(false)} 
+      />
     </main>
   )
 }
