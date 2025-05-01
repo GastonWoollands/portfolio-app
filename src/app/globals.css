@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+}
+
+.dark {
+  --foreground-rgb: 255, 255, 255;
+  --background-rgb: 0, 0, 0;
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  font-family: 'Inter', sans-serif;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+@layer components {
+  .section {
+    @apply min-h-screen w-full px-4 py-16 md:px-8 md:py-24;
+  }
+  
+  .container {
+    @apply mx-auto max-w-7xl;
+  }
+  
+  .heading {
+    @apply text-4xl font-bold md:text-5xl lg:text-6xl text-primary dark:text-primary-dark;
+  }
+  
+  .subheading {
+    @apply text-xl text-gray-600 dark:text-gray-400;
+  }
+}
