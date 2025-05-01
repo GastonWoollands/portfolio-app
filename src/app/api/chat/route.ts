@@ -19,6 +19,7 @@ let index: ReturnType<Pinecone['Index']> | null = null
 
 if (missingVars.length === 0) {
   try {
+    console.log('Initializing OpenAI and Pinecone clients...')
     openai = new OpenAI({
       apiKey: process.env.OPENAI_API_KEY!,
     })
@@ -27,7 +28,9 @@ if (missingVars.length === 0) {
       apiKey: process.env.PINECONE_API_KEY!,
     })
 
+    console.log('Connecting to Pinecone index: cv-data-2')
     index = pinecone.Index('cv-data-2')
+    console.log('Pinecone index initialized successfully')
   } catch (error) {
     console.error('Failed to initialize Pinecone:', error)
   }
@@ -57,15 +60,30 @@ export async function POST(req: Request) {
     // Get relevant context from Pinecone
     let context = ''
     try {
+      console.log('Querying Pinecone with message:', message)
       const queryResponse = await index.query({
         vector: await getEmbedding(message),
         topK: 3,
         includeMetadata: true,
       })
 
+      console.log('Pinecone query response:', JSON.stringify(queryResponse, null, 2))
+      
       context = queryResponse.matches
-        ?.map((match: any) => match.metadata?.text)
+        ?.map((match: any) => {
+          try {
+            // Parse the nested JSON structure
+            const nodeContent = JSON.parse(match.metadata?._node_content || '{}')
+            return nodeContent.text || ''
+          } catch (error) {
+            console.error('Error parsing node content:', error)
+            return ''
+          }
+        })
+        .filter(Boolean) // Remove empty strings
         .join('\n\n') || ''
+      
+      console.log('Extracted context:', context)
     } catch (error) {
       console.error('Error querying Pinecone:', error)
       return NextResponse.json(
@@ -76,6 +94,7 @@ export async function POST(req: Request) {
 
     // Generate response using OpenAI
     try {
+      console.log('Sending to OpenAI with context:', context)
       const completion = await openai.chat.completions.create({
         model: 'gpt-4',
         messages: [
