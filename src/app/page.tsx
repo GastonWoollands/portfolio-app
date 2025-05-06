@@ -344,6 +344,18 @@ const ContactSection = () => {
           >
             Interested in working together? Feel free to reach out for collaborations or just a friendly chat.
           </motion.p>
+          <motion.div
+            variants={fadeInUp}
+            className="text-center mb-8"
+          >
+            <p className="text-gray-700 dark:text-gray-300 mb-2">You can reach me via LinkedIn or Email:</p>
+            <a 
+              href="mailto:contact@gwoollands.com" 
+              className="text-accent dark:text-accent-dark font-semibold hover:underline text-lg"
+            >
+              contact@gwoollands.com
+            </a>
+          </motion.div>
         </motion.div>
         <motion.div
           variants={fadeInUp}

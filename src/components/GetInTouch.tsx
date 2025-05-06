@@ -70,6 +70,15 @@ export default function GetInTouch() {
           <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
             Get in Touch
           </h2>
+          <div className="text-center mb-8">
+            <p className="text-gray-600 dark:text-gray-300 mb-2">You can also reach me directly at:</p>
+            <a 
+              href="mailto:contact@gwoollands.com" 
+              className="text-accent dark:text-accent-dark font-semibold hover:underline"
+            >
+              contact@gwoollands.com
+            </a>
+          </div>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
               <label
