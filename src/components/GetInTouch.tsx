@@ -1,7 +1,7 @@
 'use client'
 
-import { useState } from 'react'
-import { motion } from 'framer-motion'
+import { useState, useCallback } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
 
 export default function GetInTouch() {
   const [formData, setFormData] = useState({
@@ -22,8 +22,12 @@ export default function GetInTouch() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
+    e.stopPropagation()
+    
+    if (isSubmitting) return
+    
     setIsSubmitting(true)
     setStatus({ type: null, message: '' })
 
@@ -55,7 +59,7 @@ export default function GetInTouch() {
     } finally {
       setIsSubmitting(false)
     }
-  }
+  }, [formData, isSubmitting])
 
   return (
     <section className="py-16 bg-gray-50 dark:bg-gray-900">
@@ -79,7 +83,12 @@ export default function GetInTouch() {
               contact@gwoollands.com
             </a>
           </div>
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form 
+            onSubmit={handleSubmit} 
+            className="space-y-6" 
+            noValidate
+            onClick={(e) => e.stopPropagation()}
+          >
             <div>
               <label
                 htmlFor="name"
@@ -131,23 +140,88 @@ export default function GetInTouch() {
                 className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark"
               />
             </div>
-            {status.type && (
-              <div
-                className={`p-4 rounded-lg ${
-                  status.type === 'success'
-                    ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                    : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
-                }`}
-              >
-                {status.message}
-              </div>
-            )}
+            <AnimatePresence mode="wait">
+              {status.type && (
+                <motion.div
+                  key={status.type}
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className={`p-4 rounded-lg ${
+                    status.type === 'success'
+                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
+                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                  }`}
+                >
+                  <div className="flex items-center space-x-2">
+                    {status.type === 'success' ? (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M5 13l4 4L19 7"
+                        />
+                      </svg>
+                    ) : (
+                      <svg
+                        className="w-5 h-5"
+                        fill="none"
+                        stroke="currentColor"
+                        viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          strokeWidth={2}
+                          d="M6 18L18 6M6 6l12 12"
+                        />
+                      </svg>
+                    )}
+                    <span>{status.message}</span>
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-accent dark:bg-accent-dark text-white py-3 px-6 rounded-lg hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full bg-accent dark:bg-accent-dark text-white py-3 px-6 rounded-lg hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
-              {isSubmitting ? 'Sending...' : 'Send Message'}
+              {isSubmitting ? (
+                <>
+                  <svg
+                    className="animate-spin h-5 w-5 text-white"
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                  >
+                    <circle
+                      className="opacity-25"
+                      cx="12"
+                      cy="12"
+                      r="10"
+                      stroke="currentColor"
+                      strokeWidth="4"
+                    />
+                    <path
+                      className="opacity-75"
+                      fill="currentColor"
+                      d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                    />
+                  </svg>
+                  <span>Sending...</span>
+                </>
+              ) : (
+                <span>Send Message</span>
+              )}
             </button>
           </form>
         </motion.div>
