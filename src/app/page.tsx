@@ -6,6 +6,7 @@ import Navbar from '@/components/Navbar'
 import Link from 'next/link'
 import Image from 'next/image'
 import Chatbot from '@/components/Chatbot'
+import GetInTouch from '@/components/GetInTouch'
 import { useState } from 'react'
 
 const fadeInUp = {
@@ -326,80 +327,7 @@ const ContactSection = () => {
         transition={{ duration: 0.8 }}
         className="container mx-auto px-4 py-16 relative"
       >
-        <motion.div
-          variants={staggerContainer}
-          initial="initial"
-          animate={inView ? "animate" : "initial"}
-          className="text-center"
-        >
-          <motion.h2 
-            className="text-3xl md:text-4xl font-bold text-primary dark:text-primary-dark mb-4"
-            variants={fadeInUp}
-          >
-            Get in Touch
-          </motion.h2>
-          <motion.p 
-            className="text-lg text-gray-700 dark:text-gray-300 text-center mb-12 max-w-2xl mx-auto"
-            variants={fadeInUp}
-          >
-            Interested in working together? Feel free to reach out for collaborations or just a friendly chat.
-          </motion.p>
-          <motion.div
-            variants={fadeInUp}
-            className="text-center mb-8"
-          >
-            <p className="text-gray-700 dark:text-gray-300 mb-2">You can reach me via LinkedIn or Email:</p>
-            <a 
-              href="mailto:contact@gwoollands.com" 
-              className="text-accent dark:text-accent-dark font-semibold hover:underline text-lg"
-            >
-              contact@gwoollands.com
-            </a>
-          </motion.div>
-        </motion.div>
-        <motion.div
-          variants={fadeInUp}
-          className="max-w-md mx-auto bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg p-8"
-        >
-          <form className="space-y-6">
-            <div>
-              <label htmlFor="name" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Name
-              </label>
-              <input
-                type="text"
-                id="name"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:border-transparent transition-colors duration-200"
-              />
-            </div>
-            <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Email
-              </label>
-              <input
-                type="email"
-                id="email"
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:border-transparent transition-colors duration-200"
-              />
-            </div>
-            <div>
-              <label htmlFor="message" className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                Message
-              </label>
-              <textarea
-                id="message"
-                rows={4}
-                className="w-full px-4 py-2 rounded-md border border-gray-300 dark:border-gray-600 dark:bg-gray-700 dark:text-white focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:border-transparent transition-colors duration-200"
-              />
-            </div>
-            <button
-              type="submit"
-              className="w-full bg-accent dark:bg-accent-dark text-white py-2 px-4 rounded-md hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 transform hover:scale-[1.02]"
-            >
-              Send Message
-            </button>
-          </form>
-        </motion.div>
+        <GetInTouch />
       </motion.div>
     </section>
   )
