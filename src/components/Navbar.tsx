@@ -19,6 +19,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -63,7 +64,12 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
+      setIsMobileMenuOpen(false) // Close mobile menu after navigation
     }
+  }
+
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen)
   }
 
   if (!mounted) return null
@@ -168,7 +174,11 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
               </button>
 
               {/* Mobile menu button */}
-              <button className="md:hidden text-gray-600 dark:text-gray-300 hover:text-accent dark:hover:text-accent">
+              <button 
+                onClick={toggleMobileMenu}
+                className="md:hidden text-gray-600 dark:text-gray-300 hover:text-accent dark:hover:text-accent transition-colors duration-200"
+                aria-label="Toggle mobile menu"
+              >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   className="h-6 w-6"
@@ -188,6 +198,84 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
           </div>
         </div>
       </motion.nav>
+
+      {/* Mobile Menu Overlay */}
+      {isMobileMenuOpen && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          className="fixed inset-0 z-40 md:hidden"
+          onClick={() => setIsMobileMenuOpen(false)}
+        >
+          <div className="absolute inset-0 bg-black/20" />
+        </motion.div>
+      )}
+
+      {/* Mobile Menu */}
+      <motion.div
+        initial={{ x: '100%' }}
+        animate={{ x: isMobileMenuOpen ? 0 : '100%' }}
+        transition={{ type: 'tween', duration: 0.2 }}
+        className="fixed top-0 right-0 h-full w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg z-50 md:hidden"
+      >
+        <div className="flex flex-col h-full">
+          {/* Mobile menu header */}
+          <div className="flex items-center justify-end p-6">
+            <button
+              onClick={() => setIsMobileMenuOpen(false)}
+              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              aria-label="Close mobile menu"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M6 18L18 6M6 6l12 12"
+                />
+              </svg>
+            </button>
+          </div>
+
+          {/* Mobile menu items */}
+          <div className="flex-1 px-6">
+            <div className="space-y-2">
+              {sections.map((section) => (
+                <button
+                  key={section.id}
+                  onClick={() => scrollToSection(section.id)}
+                  className={`w-full text-left py-4 px-2 rounded-lg transition-all duration-200 font-medium ${
+                    activeSection === section.id
+                      ? 'text-accent dark:text-accent-dark bg-accent/10 dark:bg-accent-dark/10'
+                      : 'text-gray-700 dark:text-gray-300 hover:text-accent dark:hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                  }`}
+                >
+                  {section.label}
+                </button>
+              ))}
+              
+              {/* Chat button inline with navigation items */}
+              <button
+                onClick={onChatOpen}
+                className="w-full text-left py-4 px-2 rounded-lg transition-all duration-200 font-medium text-accent dark:text-accent-dark hover:bg-accent/10 dark:hover:bg-accent-dark/10"
+              >
+                Chat with me
+              </button>
+            </div>
+          </div>
+
+          {/* Mobile menu footer - now empty */}
+          <div className="p-6">
+          </div>
+        </div>
+      </motion.div>
 
       {/* Visual Navigation */}
       <motion.div

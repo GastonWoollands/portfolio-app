@@ -32,30 +32,6 @@ async function testEmailConfiguration() {
   }
 }
 
-// Handle both GET and POST methods
-export async function GET() {
-  try {
-    const isConfigured = await testEmailConfiguration()
-    if (!isConfigured) {
-      return NextResponse.json(
-        { error: 'Email service is not properly configured. Please check your Resend setup.' },
-        { status: 500 }
-      )
-    }
-
-    return NextResponse.json(
-      { message: 'Email configuration test successful' },
-      { status: 200 }
-    )
-  } catch (error) {
-    console.error('Error in test endpoint:', error)
-    return NextResponse.json(
-      { error: 'An unexpected error occurred while testing email configuration.' },
-      { status: 500 }
-    )
-  }
-}
-
 export async function POST(request: Request) {
   try {
     // Test email configuration first
