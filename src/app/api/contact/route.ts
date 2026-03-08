@@ -2,44 +2,18 @@ import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
 // Initialize Resend with API key
-const resend = new Resend(process.env.RESEND_API_KEY)
-
-// Validate environment variables
-if (!process.env.RESEND_API_KEY) {
-  console.error('RESEND_API_KEY is not set in environment variables')
-}
-
-// Test email configuration
-async function testEmailConfiguration() {
-  try {
-    const { data, error } = await resend.emails.send({
-      from: 'Contact Form <contact@gwoollands.com>',
-      to: ['contact@gwoollands.com'],
-      subject: 'Test Email Configuration',
-      html: '<p>This is a test email to verify your Resend configuration.</p>',
-    })
-
-    if (error) {
-      console.error('Email configuration test failed:', error)
-      return false
-    }
-
-    console.log('Email configuration test successful:', data)
-    return true
-  } catch (error) {
-    console.error('Error testing email configuration:', error)
-    return false
-  }
-}
+const resend = process.env.RESEND_API_KEY
+  ? new Resend(process.env.RESEND_API_KEY)
+  : null
 
 export async function POST(request: Request) {
   try {
-    // Test email configuration first
-    const isConfigured = await testEmailConfiguration()
-    if (!isConfigured) {
+    // Validate that the email service is configured
+    if (!resend) {
+      console.error('RESEND_API_KEY is not set in environment variables')
       return NextResponse.json(
-        { error: 'Email service is not properly configured. Please check your Resend setup.' },
-        { status: 500 }
+        { error: 'Email service is not configured. Please contact the site owner.' },
+        { status: 503 }
       )
     }
 

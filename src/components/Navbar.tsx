@@ -15,11 +15,18 @@ interface NavbarProps {
   onChatOpen: () => void
 }
 
+const LogoFallback = () => (
+  <div className="w-10 h-10 rounded-full bg-accent dark:bg-accent-dark flex items-center justify-center">
+    <span className="font-heading text-sm font-bold text-white">GW</span>
+  </div>
+)
+
 const Navbar = ({ onChatOpen }: NavbarProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [mounted, setMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+  const [logoError, setLogoError] = useState(false)
 
   useEffect(() => {
     setMounted(true)
@@ -64,7 +71,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
     const element = document.getElementById(sectionId)
     if (element) {
       element.scrollIntoView({ behavior: 'smooth' })
-      setIsMobileMenuOpen(false) // Close mobile menu after navigation
+      setIsMobileMenuOpen(false)
     }
   }
 
@@ -81,19 +88,24 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
         initial={{ y: -100 }}
         animate={{ y: 0 }}
         transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm shadow-sm"
+        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm shadow-sm"
       >
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
-            <Link href="#home" className="flex items-center">
-              <Image
-                src="/logo.jpg"
-                alt="Logo"
-                width={40}
-                height={40}
-                className="rounded-full"
-                priority
-              />
+            <Link href="#home" className="flex items-center" aria-label="Go to home">
+              {logoError ? (
+                <LogoFallback />
+              ) : (
+                <Image
+                  src="/logo.jpg"
+                  alt="GW Logo"
+                  width={40}
+                  height={40}
+                  className="rounded-full"
+                  priority
+                  onError={() => setLogoError(true)}
+                />
+              )}
             </Link>
             
             <div className="flex items-center space-x-8">
@@ -102,7 +114,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   <Link
                     key={section.id}
                     href={`#${section.id}`}
-                    className="text-gray-600 dark:text-gray-300 hover:text-accent dark:hover:text-accent transition-colors duration-200"
+                    className="text-neutral-600 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark transition-colors duration-200"
                   >
                     {section.label}
                   </Link>
@@ -121,6 +133,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   stroke="currentColor"
                   viewBox="0 0 24 24"
                   xmlns="http://www.w3.org/2000/svg"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -130,23 +143,24 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   />
                 </svg>
                 {/* Tooltip */}
-                <div className="absolute right-0 top-full mt-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap">
+                <div className="absolute right-0 top-full mt-2 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
                   Chat with me
                 </div>
               </button>
 
               <button
                 onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
-                aria-label="Toggle theme"
+                className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200"
+                aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
               >
                 {theme === 'light' ? (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                    className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -158,10 +172,11 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                 ) : (
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                    className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
                     fill="none"
                     viewBox="0 0 24 24"
                     stroke="currentColor"
+                    aria-hidden="true"
                   >
                     <path
                       strokeLinecap="round"
@@ -176,7 +191,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
               {/* Mobile menu button */}
               <button 
                 onClick={toggleMobileMenu}
-                className="md:hidden text-gray-600 dark:text-gray-300 hover:text-accent dark:hover:text-accent transition-colors duration-200"
+                className="md:hidden text-neutral-600 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark transition-colors duration-200"
                 aria-label="Toggle mobile menu"
               >
                 <svg
@@ -185,6 +200,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   fill="none"
                   viewBox="0 0 24 24"
                   stroke="currentColor"
+                  aria-hidden="true"
                 >
                   <path
                     strokeLinecap="round"
@@ -208,7 +224,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
           className="fixed inset-0 z-40 md:hidden"
           onClick={() => setIsMobileMenuOpen(false)}
         >
-          <div className="absolute inset-0 bg-black/20" />
+          <div className="absolute inset-0 bg-black/20 dark:bg-black/40" />
         </motion.div>
       )}
 
@@ -217,22 +233,23 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
         initial={{ x: '100%' }}
         animate={{ x: isMobileMenuOpen ? 0 : '100%' }}
         transition={{ type: 'tween', duration: 0.2 }}
-        className="fixed top-0 right-0 h-full w-56 bg-white/95 dark:bg-gray-900/95 backdrop-blur-sm shadow-lg z-50 md:hidden"
+        className="fixed top-0 right-0 h-full w-56 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm shadow-lg z-50 md:hidden"
       >
         <div className="flex flex-col h-full">
           {/* Mobile menu header */}
           <div className="flex items-center justify-end p-6">
             <button
               onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200"
+              className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200"
               aria-label="Close mobile menu"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-gray-600 dark:text-gray-300"
+                className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
+                aria-hidden="true"
               >
                 <path
                   strokeLinecap="round"
@@ -254,7 +271,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   className={`w-full text-left py-4 px-2 rounded-lg transition-all duration-200 font-medium ${
                     activeSection === section.id
                       ? 'text-accent dark:text-accent-dark bg-accent/10 dark:bg-accent-dark/10'
-                      : 'text-gray-700 dark:text-gray-300 hover:text-accent dark:hover:text-accent hover:bg-gray-50 dark:hover:bg-gray-800/50'
+                      : 'text-neutral-700 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
                   }`}
                 >
                   {section.label}
@@ -271,9 +288,8 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
             </div>
           </div>
 
-          {/* Mobile menu footer - now empty */}
-          <div className="p-6">
-          </div>
+          {/* Mobile menu footer */}
+          <div className="p-6" />
         </div>
       </motion.div>
 
@@ -289,14 +305,15 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
             <button
               key={section.id}
               onClick={() => scrollToSection(section.id)}
-              className="group flex items-center space-x-2 focus:outline-none"
+              className="group flex items-center space-x-2"
+              aria-label={`Navigate to ${section.label}`}
             >
               <div className="relative">
                 <motion.div
                   className={`w-3 h-3 rounded-full ${
                     activeSection === section.id
                       ? 'bg-accent dark:bg-accent-dark'
-                      : 'bg-gray-300 dark:bg-gray-600'
+                      : 'bg-neutral-300 dark:bg-neutral-600'
                   }`}
                   animate={{
                     scale: activeSection === section.id ? 1.5 : 1,
@@ -306,7 +323,7 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
                   className={`absolute top-1/2 left-6 transform -translate-y-1/2 text-sm font-medium whitespace-nowrap ${
                     activeSection === section.id
                       ? 'text-accent dark:text-accent-dark'
-                      : 'text-gray-400 dark:text-gray-500'
+                      : 'text-neutral-400 dark:text-neutral-500'
                   }`}
                   initial={{ opacity: 0, x: -10 }}
                   animate={{

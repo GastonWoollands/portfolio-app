@@ -48,7 +48,7 @@ export default function GetInTouch() {
 
       setStatus({
         type: 'success',
-        message: 'Message sent successfully! I will get back to you soon.',
+        message: "Message sent. I'll get back within 24 hours.",
       })
       setFormData({ name: '', email: '', message: '' })
     } catch (error) {
@@ -62,20 +62,23 @@ export default function GetInTouch() {
   }, [formData, isSubmitting])
 
   return (
-    <section className="py-16 bg-gray-50 dark:bg-gray-900">
+    <section className="py-16">
       <div className="container mx-auto px-4">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.5 }}
-          className="max-w-2xl mx-auto"
+          className="max-w-2xl mx-auto bg-white dark:bg-neutral-800/95 rounded-2xl shadow-xl p-8 md:p-10"
         >
-          <h2 className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-gray-100">
+          <h2 className="font-heading text-3xl md:text-4xl font-bold text-center mb-2 text-primary dark:text-primary-dark">
             Get in Touch
           </h2>
+          <p className="text-center text-neutral-500 dark:text-neutral-400 mb-6">
+            For consulting and project inquiries.
+          </p>
           <div className="text-center mb-8">
-            <p className="text-gray-600 dark:text-gray-300 mb-2">You can also reach me directly at:</p>
+            <p className="text-neutral-600 dark:text-neutral-400 mb-2">You can also reach me directly at:</p>
             <a 
               href="mailto:contact@gwoollands.com" 
               className="text-accent dark:text-accent-dark font-semibold hover:underline"
@@ -92,7 +95,7 @@ export default function GetInTouch() {
             <div>
               <label
                 htmlFor="name"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
               >
                 Name
               </label>
@@ -103,13 +106,13 @@ export default function GetInTouch() {
                 value={formData.name}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark"
+                className="w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-800"
               />
             </div>
             <div>
               <label
                 htmlFor="email"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
               >
                 Email
               </label>
@@ -120,13 +123,13 @@ export default function GetInTouch() {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark"
+                className="w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-800"
               />
             </div>
             <div>
               <label
                 htmlFor="message"
-                className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+                className="block text-sm font-medium text-neutral-700 dark:text-neutral-300 mb-1"
               >
                 Message
               </label>
@@ -137,7 +140,7 @@ export default function GetInTouch() {
                 onChange={handleChange}
                 required
                 rows={4}
-                className="w-full px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark"
+                className="w-full px-4 py-3 rounded-lg border border-neutral-300 dark:border-neutral-600 bg-white dark:bg-neutral-900 text-primary dark:text-primary-dark focus:outline-none focus:ring-2 focus:ring-accent dark:focus:ring-accent-dark focus:ring-offset-2 focus:ring-offset-white dark:focus:ring-offset-neutral-800 resize-none"
               />
             </div>
             <AnimatePresence mode="wait">
@@ -149,14 +152,14 @@ export default function GetInTouch() {
                   exit={{ opacity: 0, y: -10 }}
                   className={`p-4 rounded-lg ${
                     status.type === 'success'
-                      ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100'
-                      : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100'
+                      ? 'bg-blue-50 text-blue-800 dark:bg-blue-900/30 dark:text-blue-200 border border-blue-200 dark:border-blue-800'
+                      : 'bg-red-50 text-red-800 dark:bg-red-900/30 dark:text-red-200 border border-red-200 dark:border-red-800'
                   }`}
                 >
                   <div className="flex items-center space-x-2">
                     {status.type === 'success' ? (
                       <svg
-                        className="w-5 h-5"
+                        className="w-5 h-5 flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -171,7 +174,7 @@ export default function GetInTouch() {
                       </svg>
                     ) : (
                       <svg
-                        className="w-5 h-5"
+                        className="w-5 h-5 flex-shrink-0"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -193,7 +196,7 @@ export default function GetInTouch() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-accent dark:bg-accent-dark text-white py-3 px-6 rounded-lg hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
+              className="w-full bg-accent dark:bg-accent-dark text-white py-3 px-6 rounded-lg font-semibold hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
             >
               {isSubmitting ? (
                 <>

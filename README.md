@@ -1,6 +1,6 @@
-# Gaston Woollands - Professional Portfolio
+# Professional Portfolio
 
-A modern, responsive portfolio website built with Next.js, featuring a chatbot powered by OpenAI and Pinecone.
+A modern, responsive portfolio website built with Next.js, featuring a chatbot powered by OpenAI that answers questions using your CV as context.
 
 ## Features
 
@@ -15,7 +15,7 @@ A modern, responsive portfolio website built with Next.js, featuring a chatbot p
 - **Framework**: Next.js 14
 - **Styling**: Tailwind CSS
 - **Animation**: Framer Motion
-- **AI Integration**: OpenAI, Pinecone
+- **AI Integration**: OpenAI
 - **Email**: Resend
 - **Deployment**: Vercel
 
@@ -29,10 +29,10 @@ A modern, responsive portfolio website built with Next.js, featuring a chatbot p
 3. Create a `.env.local` file with:
    ```
    OPENAI_API_KEY=your_openai_key
-   PINECONE_API_KEY=your_pinecone_key
    RESEND_API_KEY=your_resend_key
    EMAIL_RECIPIENT=your_email
    ```
+   The chatbot uses your CV from `src/content/cv-context.ts` as context (no Pinecone required).
 4. Run the development server:
    ```bash
    npm run dev
