@@ -1,10 +1,17 @@
 import { NextResponse } from 'next/server'
 import { Resend } from 'resend'
 
-// Initialize Resend with API key
 const resend = process.env.RESEND_API_KEY
   ? new Resend(process.env.RESEND_API_KEY)
   : null
+
+const escapeHtml = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
 
 export async function POST(request: Request) {
   try {
@@ -19,7 +26,6 @@ export async function POST(request: Request) {
 
     const { name, email, message } = await request.json()
 
-    // Validate the input
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: 'All fields are required' },
@@ -27,33 +33,26 @@ export async function POST(request: Request) {
       )
     }
 
-    // Log the attempt to send email
-    console.log('Attempting to send email:', {
-      from: 'contact@gwoollands.com',
-      to: 'contact@gwoollands.com',
-      subject: `New Contact Form Submission from ${name}`,
-    })
+    const safeName = escapeHtml(String(name))
+    const safeEmail = escapeHtml(String(email))
+    const safeMessage = escapeHtml(String(message))
 
-    // Send email using Resend
     const { data, error } = await resend.emails.send({
       from: 'Contact Form <contact@gwoollands.com>',
       to: ['contact@gwoollands.com'],
-      subject: `New Contact Form Submission from ${name}`,
-      replyTo: email,
+      subject: `New Contact Form Submission from ${String(name).slice(0, 120)}`,
+      replyTo: String(email),
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
           <h2 style="color: #333;">New Contact Form Submission</h2>
           <div style="background-color: #f5f5f5; padding: 20px; border-radius: 5px;">
-            <p style="margin: 10px 0;"><strong>Name:</strong> ${name}</p>
-            <p style="margin: 10px 0;"><strong>Email:</strong> ${email}</p>
+            <p style="margin: 10px 0;"><strong>Name:</strong> ${safeName}</p>
+            <p style="margin: 10px 0;"><strong>Email:</strong> ${safeEmail}</p>
             <p style="margin: 10px 0;"><strong>Message:</strong></p>
             <div style="background-color: white; padding: 15px; border-radius: 5px; margin-top: 10px;">
-              <p style="margin: 0; white-space: pre-wrap;">${message}</p>
+              <p style="margin: 0; white-space: pre-wrap;">${safeMessage}</p>
             </div>
           </div>
-          <p style="color: #666; font-size: 12px; margin-top: 20px;">
-            This email was sent from your website's contact form.
-          </p>
         </div>
       `,
     })

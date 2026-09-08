@@ -1,46 +1,27 @@
 'use client'
 
-import { motion } from 'framer-motion'
-import Image from 'next/image'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-
-const sections = [
-  { id: 'home', label: 'Home' },
-  { id: 'projects', label: 'Projects' },
-  { id: 'contact', label: 'Contact' },
-]
+import { navItems, site } from '@/content/site'
 
 interface NavbarProps {
   onChatOpen: () => void
 }
 
-const LogoFallback = () => (
-  <div className="w-10 h-10 rounded-full bg-accent dark:bg-accent-dark flex items-center justify-center">
-    <span className="font-heading text-sm font-bold text-white">GW</span>
-  </div>
-)
-
 const Navbar = ({ onChatOpen }: NavbarProps) => {
   const [theme, setTheme] = useState<'light' | 'dark'>('light')
-  const [mounted, setMounted] = useState(false)
   const [activeSection, setActiveSection] = useState('home')
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
-  const [logoError, setLogoError] = useState(false)
 
   useEffect(() => {
-    setMounted(true)
-    const savedTheme = localStorage.getItem('theme') as 'light' | 'dark' | null
-    if (savedTheme) {
-      setTheme(savedTheme)
-      document.documentElement.classList.toggle('dark', savedTheme === 'dark')
-    } else if (window.matchMedia('(prefers-color-scheme: dark)').matches) {
-      setTheme('dark')
-      document.documentElement.classList.add('dark')
-    }
+    const saved = localStorage.getItem('theme')
+    const isDark = saved === 'dark'
+    setTheme(isDark ? 'dark' : 'light')
+    document.documentElement.classList.toggle('dark', isDark)
   }, [])
 
   useEffect(() => {
+    const ids = ['home', ...navItems.map((item) => item.id)]
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -49,11 +30,11 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
           }
         })
       },
-      { threshold: 0.5 }
+      { threshold: 0.2 }
     )
 
-    sections.forEach((section) => {
-      const element = document.getElementById(section.id)
+    ids.forEach((id) => {
+      const element = document.getElementById(id)
       if (element) observer.observe(element)
     })
 
@@ -61,10 +42,10 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
   }, [])
 
   const toggleTheme = () => {
-    const newTheme = theme === 'light' ? 'dark' : 'light'
-    setTheme(newTheme)
-    localStorage.setItem('theme', newTheme)
-    document.documentElement.classList.toggle('dark')
+    const next = theme === 'light' ? 'dark' : 'light'
+    setTheme(next)
+    localStorage.setItem('theme', next)
+    document.documentElement.classList.toggle('dark', next === 'dark')
   }
 
   const scrollToSection = (sectionId: string) => {
@@ -75,271 +56,87 @@ const Navbar = ({ onChatOpen }: NavbarProps) => {
     }
   }
 
-  const toggleMobileMenu = () => {
-    setIsMobileMenuOpen(!isMobileMenuOpen)
-  }
-
-  if (!mounted) return null
-
   return (
     <>
-      {/* Top Navigation Bar */}
-      <motion.nav
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="fixed top-0 left-0 right-0 z-50 bg-white/80 dark:bg-neutral-900/80 backdrop-blur-sm shadow-sm"
-      >
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <Link href="#home" className="flex items-center" aria-label="Go to home">
-              {logoError ? (
-                <LogoFallback />
-              ) : (
-                <Image
-                  src="/logo.jpg"
-                  alt="GW Logo"
-                  width={40}
-                  height={40}
-                  className="rounded-full"
-                  priority
-                  onError={() => setLogoError(true)}
-                />
-              )}
-            </Link>
-            
-            <div className="flex items-center space-x-8">
-              <div className="hidden md:flex items-center space-x-8">
-                {sections.map((section) => (
-                  <Link
-                    key={section.id}
-                    href={`#${section.id}`}
-                    className="text-neutral-600 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark transition-colors duration-200"
-                  >
-                    {section.label}
-                  </Link>
-                ))}
-              </div>
+      <nav className="fixed top-0 left-0 right-0 z-50 border-b border-hairline dark:border-hairline-dark bg-paper/90 dark:bg-paper-dark/90 backdrop-blur-sm">
+        <div className="page-shell flex items-center justify-between h-14">
+          <Link
+            href="#home"
+            className="font-mono text-[13px] tracking-[0.12em] text-ink dark:text-paper"
+            aria-label="Go to home"
+          >
+            {site.wordmark}
+          </Link>
 
-              {/* Chat button */}
-              <button
-                onClick={onChatOpen}
-                className="p-2 rounded-full bg-accent dark:bg-accent-dark text-white hover:bg-accent/90 dark:hover:bg-accent-dark/90 transition-colors duration-200 group relative"
-                aria-label="Open chat"
+          <div className="hidden md:flex items-center gap-8">
+            {navItems.map((item) => (
+              <Link
+                key={item.id}
+                href={`#${item.id}`}
+                className={`nav-link ${activeSection === item.id ? 'nav-link-active' : ''}`}
               >
-                <svg
-                  className="w-5 h-5"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                  xmlns="http://www.w3.org/2000/svg"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"
-                  />
-                </svg>
-                {/* Tooltip */}
-                <div className="absolute right-0 top-full mt-2 px-2 py-1 bg-neutral-800 dark:bg-neutral-700 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity duration-200 whitespace-nowrap pointer-events-none">
-                  Chat with me
-                </div>
-              </button>
-
-              <button
-                onClick={toggleTheme}
-                className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200"
-                aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
-              >
-                {theme === 'light' ? (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-                    />
-                  </svg>
-                ) : (
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                    aria-hidden="true"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
-                    />
-                  </svg>
-                )}
-              </button>
-
-              {/* Mobile menu button */}
-              <button 
-                onClick={toggleMobileMenu}
-                className="md:hidden text-neutral-600 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark transition-colors duration-200"
-                aria-label="Toggle mobile menu"
-              >
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  className="h-6 w-6"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                  aria-hidden="true"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 6h16M4 12h16M4 18h16"
-                  />
-                </svg>
-              </button>
-            </div>
+                {item.label}
+              </Link>
+            ))}
+            <button onClick={onChatOpen} className="nav-link">
+              ask
+            </button>
+            <button
+              onClick={toggleTheme}
+              className="nav-link"
+              aria-label={theme === 'light' ? 'Switch to dark mode' : 'Switch to light mode'}
+            >
+              {theme === 'light' ? 'dark' : 'light'}
+            </button>
           </div>
-        </div>
-      </motion.nav>
 
-      {/* Mobile Menu Overlay */}
+          <button
+            onClick={() => setIsMobileMenuOpen((open) => !open)}
+            className="md:hidden nav-link"
+            aria-expanded={isMobileMenuOpen}
+            aria-label="Toggle menu"
+          >
+            {isMobileMenuOpen ? 'close' : 'menu'}
+          </button>
+        </div>
+      </nav>
+
       {isMobileMenuOpen && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          className="fixed inset-0 z-40 md:hidden"
-          onClick={() => setIsMobileMenuOpen(false)}
-        >
-          <div className="absolute inset-0 bg-black/20 dark:bg-black/40" />
-        </motion.div>
-      )}
-
-      {/* Mobile Menu */}
-      <motion.div
-        initial={{ x: '100%' }}
-        animate={{ x: isMobileMenuOpen ? 0 : '100%' }}
-        transition={{ type: 'tween', duration: 0.2 }}
-        className="fixed top-0 right-0 h-full w-56 bg-white/95 dark:bg-neutral-900/95 backdrop-blur-sm shadow-lg z-50 md:hidden"
-      >
-        <div className="flex flex-col h-full">
-          {/* Mobile menu header */}
-          <div className="flex items-center justify-end p-6">
-            <button
-              onClick={() => setIsMobileMenuOpen(false)}
-              className="p-2 rounded-full hover:bg-neutral-100 dark:hover:bg-neutral-800 transition-colors duration-200"
-              aria-label="Close mobile menu"
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-neutral-600 dark:text-neutral-300"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-                aria-hidden="true"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          {/* Mobile menu items */}
-          <div className="flex-1 px-6">
-            <div className="space-y-2">
-              {sections.map((section) => (
-                <button
-                  key={section.id}
-                  onClick={() => scrollToSection(section.id)}
-                  className={`w-full text-left py-4 px-2 rounded-lg transition-all duration-200 font-medium ${
-                    activeSection === section.id
-                      ? 'text-accent dark:text-accent-dark bg-accent/10 dark:bg-accent-dark/10'
-                      : 'text-neutral-700 dark:text-neutral-300 hover:text-accent dark:hover:text-accent-dark hover:bg-neutral-50 dark:hover:bg-neutral-800/50'
-                  }`}
-                >
-                  {section.label}
-                </button>
-              ))}
-              
-              {/* Chat button inline with navigation items */}
+        <div className="fixed inset-0 z-40 md:hidden bg-paper dark:bg-paper-dark pt-14">
+          <div className="page-shell flex flex-col gap-2 py-10">
+            {navItems.map((item) => (
               <button
-                onClick={onChatOpen}
-                className="w-full text-left py-4 px-2 rounded-lg transition-all duration-200 font-medium text-accent dark:text-accent-dark hover:bg-accent/10 dark:hover:bg-accent-dark/10"
+                key={item.id}
+                onClick={() => scrollToSection(item.id)}
+                className={`text-left py-3 font-heading text-3xl ${
+                  activeSection === item.id
+                    ? 'text-ink dark:text-paper'
+                    : 'text-muted dark:text-muted-dark'
+                }`}
               >
-                Chat with me
+                {item.label}
               </button>
-            </div>
-          </div>
-
-          {/* Mobile menu footer */}
-          <div className="p-6" />
-        </div>
-      </motion.div>
-
-      {/* Visual Navigation */}
-      <motion.div
-        initial={{ opacity: 0, x: -20 }}
-        animate={{ opacity: 1, x: 0 }}
-        transition={{ duration: 0.5, delay: 0.5 }}
-        className="fixed left-4 top-1/2 transform -translate-y-1/2 z-50 hidden md:block"
-      >
-        <div className="flex flex-col items-center space-y-6">
-          {sections.map((section) => (
+            ))}
             <button
-              key={section.id}
-              onClick={() => scrollToSection(section.id)}
-              className="group flex items-center space-x-2"
-              aria-label={`Navigate to ${section.label}`}
+              onClick={() => {
+                onChatOpen()
+                setIsMobileMenuOpen(false)
+              }}
+              className="text-left py-3 font-heading text-3xl text-ink dark:text-paper"
             >
-              <div className="relative">
-                <motion.div
-                  className={`w-3 h-3 rounded-full ${
-                    activeSection === section.id
-                      ? 'bg-accent dark:bg-accent-dark'
-                      : 'bg-neutral-300 dark:bg-neutral-600'
-                  }`}
-                  animate={{
-                    scale: activeSection === section.id ? 1.5 : 1,
-                  }}
-                />
-                <motion.div
-                  className={`absolute top-1/2 left-6 transform -translate-y-1/2 text-sm font-medium whitespace-nowrap ${
-                    activeSection === section.id
-                      ? 'text-accent dark:text-accent-dark'
-                      : 'text-neutral-400 dark:text-neutral-500'
-                  }`}
-                  initial={{ opacity: 0, x: -10 }}
-                  animate={{
-                    opacity: activeSection === section.id ? 1 : 0,
-                    x: activeSection === section.id ? 0 : -10,
-                  }}
-                >
-                  {section.label}
-                </motion.div>
-              </div>
+              ask
             </button>
-          ))}
+            <button
+              onClick={toggleTheme}
+              className="text-left py-3 font-mono text-[13px] tracking-[0.08em] text-muted dark:text-muted-dark"
+            >
+              {theme === 'light' ? 'dark' : 'light'}
+            </button>
+          </div>
         </div>
-      </motion.div>
+      )}
     </>
   )
 }
 
-export default Navbar 
+export default Navbar
